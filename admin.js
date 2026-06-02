@@ -1848,7 +1848,7 @@ function buildBroadcastMessage(recipientName) {
   const itemsBlock = items.length
     ? '\n\n' + items.map((b, i) => `${i + 1}. *${b.name}*${b.price > 0 ? ' · ' + fmtKsh(b.price) : ''}`).join('\n')
     : '';
-  const lookUrl = 'https://chic-la-belle.pages.dev';
+  const lookUrl = 'https://chiclabelle.essenceautomations.com';
   const greet = recipientName ? `Hi ${recipientName.split(' ')[0]}! ` : 'Hi! ';
   return `${greet}It's Chic La Belle. ${subject || 'Fresh stock just landed'}.${itemsBlock}\n\nTap to browse: ${lookUrl}\n\nReply here to enquire. 🤍`;
 }
