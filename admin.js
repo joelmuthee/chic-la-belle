@@ -765,8 +765,61 @@ async function recordSale(withBuyer) {
     renderInventory();
     showToast(`Sale recorded — ${qty}× ${size} sold.`);
     if (withBuyer && (sale.buyerName || sale.buyerPhone)) sendBuyerToGHL(soldBag, sale);
+    lastSale = { name: soldBag ? soldBag.name : '', size, qty, amount: salePrice, buyerName: sale.buyerName, buyerPhone: sale.buyerPhone, soldAt: sale.soldAt };
+    showReceipt(lastSale);
   } catch (err) { showToast('Error: ' + err.message); }
 }
+
+// ====== RECEIPTS — WhatsApp + printable, off the existing Record-sale flow ======
+let lastSale = null;
+const CLB_SHOP = { name: 'Chic La Belle', addr1: 'Mithoo Biashara Center, 2nd floor, Shop S-05', addr2: 'Moi Avenue, Nairobi', phone: '0112 199 913' };
+
+function receiptText(s) {
+  const total = (s.amount || 0) * (s.qty || 1);
+  return [
+    `*${CLB_SHOP.name}* receipt`,
+    `${s.name} (Size ${s.size}) x${s.qty}`,
+    `Total: ${fmtKsh(total)}.`,
+    `Thank you for shopping with us. ${CLB_SHOP.addr1}, ${CLB_SHOP.addr2}.`,
+  ].join('\n');
+}
+
+function showReceipt(s) {
+  lastSale = s;
+  const total = (s.amount || 0) * (s.qty || 1);
+  document.getElementById('receiptSummary').innerHTML =
+    `<strong>${escapeHtml(s.name)}</strong> · Size ${escapeHtml(s.size)} · ${s.qty} item(s)<br>${fmtKsh(total)}`;
+  const wa = document.getElementById('receiptWaBtn');
+  if (s.buyerPhone && String(s.buyerPhone).replace(/[^0-9]/g, '').length >= 9) {
+    wa.href = `https://wa.me/${clientWaPhone(s.buyerPhone)}?text=${encodeURIComponent(receiptText(s))}`;
+    wa.style.display = '';
+  } else { wa.style.display = 'none'; }
+  document.getElementById('receiptModal').style.display = 'flex';
+}
+
+function closeReceipt() { document.getElementById('receiptModal').style.display = 'none'; }
+
+function printReceipt() {
+  if (!lastSale) return;
+  const s = lastSale, total = (s.amount || 0) * (s.qty || 1), d = new Date(s.soldAt);
+  document.getElementById('receiptPrint').innerHTML = `
+    <div class="rcpt">
+      <div class="rcpt-head">${escapeHtml(CLB_SHOP.name)}</div>
+      <div class="rcpt-sub">${escapeHtml(CLB_SHOP.addr1)}<br>${escapeHtml(CLB_SHOP.addr2)} · ${escapeHtml(CLB_SHOP.phone)}</div>
+      <hr>
+      <div class="rcpt-row"><span>${escapeHtml(s.name)}</span></div>
+      <div class="rcpt-row"><span>Size ${escapeHtml(s.size)} · ${s.qty} × ${fmtKsh(s.amount)}</span><span>${fmtKsh(total)}</span></div>
+      <hr>
+      <div class="rcpt-row rcpt-total"><span>TOTAL</span><span>${fmtKsh(total)}</span></div>
+      <div class="rcpt-date">${d.toLocaleString('en-GB')}</div>
+      <div class="rcpt-foot">Thank you for shopping with us!</div>
+    </div>`;
+  window.print();
+}
+
+document.getElementById('receiptPrintBtn')?.addEventListener('click', printReceipt);
+document.getElementById('receiptDoneBtn')?.addEventListener('click', closeReceipt);
+document.getElementById('receiptModal')?.addEventListener('click', e => { if (e.target.id === 'receiptModal') closeReceipt(); });
 
 document.getElementById('saleSaveBtn').addEventListener('click', () => recordSale(true));
 document.getElementById('saleSkipBtn').addEventListener('click', () => recordSale(false));

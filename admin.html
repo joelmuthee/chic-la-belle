@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#2A1A22">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260601m">
+<link rel="stylesheet" href="styles.css?v=20260602r">
 <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeDBFwpAAAAAJe8ux9-imrqZ2ueRsEtdiWoDDpX" async defer></script>
 </head>
 <body style="background:#f8f6f2;">
@@ -436,6 +436,23 @@
   </div>
 </div>
 
+<!-- RECEIPT — shown after a sale is recorded -->
+<div id="receiptModal" class="modal" style="display:none;">
+  <div class="modal-card">
+    <h3>Sale recorded ✓</h3>
+    <p class="sub">Send the buyer a WhatsApp receipt, or print one for the counter.</p>
+    <div id="receiptSummary" class="receipt-summary"></div>
+    <div class="admin-actions" style="margin-top:18px;">
+      <a class="btn-admin gold" id="receiptWaBtn" target="_blank" rel="noopener" style="display:none;">Send WhatsApp receipt</a>
+      <button class="btn-admin" id="receiptPrintBtn">🖨 Print receipt</button>
+      <button class="btn-admin" id="receiptDoneBtn">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Printable receipt — hidden on screen, rendered only via @media print -->
+<div id="receiptPrint" aria-hidden="true"></div>
+
 <!-- RESTOCK MODAL -->
 <div id="restockModal" class="modal" style="display:none;">
   <div class="modal-card">
@@ -592,6 +609,6 @@
   </div>
 </div>
 
-<script src="admin.js?v=20260602clb"></script>
+<script src="admin.js?v=20260602r"></script>
 </body>
 </html>
