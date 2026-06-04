@@ -742,7 +742,7 @@ const API_BASE = 'https://chiclabelle-api.stawisystems.workers.dev';
     const o = document.createElement('div');
     o.id = 'suspendedOverlay';
     o.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(180deg,#1E1014,#140A10);color:#F6E2EC;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;font-family:Inter,system-ui,sans-serif;';
-    o.innerHTML = '<img src="images/logo.jpg" alt="Chic La Belle" style="height:54px;background:#fff;border-radius:10px;padding:8px 12px;margin-bottom:28px;">'
+    o.innerHTML = '<img src="images/logo-light.png" alt="Chic La Belle" style="height:88px;margin-bottom:24px;">'
       + '<h1 style="font-family:\'Cormorant Garamond\',Georgia,serif;font-weight:500;font-size:clamp(28px,5vw,44px);color:#F0C4D6;margin:0 0 14px;line-height:1.15;">This page is temporarily unavailable</h1>'
       + '<p style="font-size:16px;max-width:440px;line-height:1.6;color:rgba(245,220,232,0.8);margin:0;">Please check back soon.</p>';
     document.body.appendChild(o);
