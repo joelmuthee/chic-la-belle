@@ -2,6 +2,7 @@
 const ADMIN_PASSWORD = 'chic123';
 const API_BASE = 'https://chiclabelle-api.stawisystems.workers.dev';
 const ADMIN_TOKEN = atob('Y2xiLWFkbWluLUU0U01JQzZYSWs5U1QtVG9YN3ZJMlJDdEhDU3lyU0Zs');
+const SHOP_URL = 'https://chiclabelle.essenceautomations.com'; // public storefront — used in WhatsApp messages to clients
 
 let bags = [];
 let settings = {};
@@ -768,7 +769,7 @@ const buyerNotes = document.getElementById('buyerNotes');
 
 // Payment method (Cash / M-Pesa) — captured on the Record-sale + Edit-sale modals.
 // It's a LABEL of how the owner was paid, not payment capture.
-let salePayMethod = 'cash';
+let salePayMethod = 'mpesa';
 function setPayToggle(containerId, method) {
   document.querySelectorAll('#' + containerId + ' .pay-btn').forEach(b => b.classList.toggle('active', b.dataset.pay === method));
 }
@@ -809,8 +810,8 @@ function openSaleModal(id) {
   buyerName.value = '';
   buyerPhone.value = '';
   buyerNotes.value = '';
-  salePayMethod = 'cash';
-  setPayToggle('salePay', 'cash');
+  salePayMethod = 'mpesa';
+  setPayToggle('salePay', 'mpesa');
   saleModal.style.display = 'flex';
   buyerName.focus();
 }
@@ -931,7 +932,7 @@ document.getElementById('saleCancelBtn').addEventListener('click', closeSaleModa
 
 // ====== EDIT / UNDO A RECORDED SALE ======
 let editingSale = null; // { bagId, soldAt }
-let editSalePayMethod = 'cash';
+let editSalePayMethod = 'mpesa';
 document.getElementById('editSalePay')?.addEventListener('click', e => {
   const b = e.target.closest('.pay-btn'); if (!b) return;
   editSalePayMethod = b.dataset.pay; setPayToggle('editSalePay', editSalePayMethod);
@@ -1768,7 +1769,7 @@ function renderClients() {
 window.clientMessage = phone => {
   const c = clientsLedger().find(x => x.phone === phone);
   const first = (c && c.name ? c.name : 'there').split(' ')[0];
-  const msg = `Hi ${first}! Thanks for shopping with Chic La Belle. Fresh pieces just landed. Want me to send you what's new?`;
+  const msg = `Hi ${first}! Thanks for shopping with Chic La Belle. Fresh pieces just landed. Browse what's new here: ${SHOP_URL}\n\nReply here and I'll help you out. 🤍`;
   window.open(`https://wa.me/${clientWaPhone(phone)}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 // Shared search-result row: thumbnail + name + category/sizes + stock/price, so
@@ -2005,12 +2006,12 @@ function openPayDebt(phone) {
   document.getElementById('payDebtName').textContent = c.name || c.phone;
   document.getElementById('payDebtOwed').textContent = fmtKsh(c.owed);
   document.getElementById('payDebtAmount').value = c.owed;
-  document.querySelectorAll('#payDebtPay .pay-btn').forEach(b => b.classList.toggle('active', b.dataset.pay === 'cash'));
+  document.querySelectorAll('#payDebtPay .pay-btn').forEach(b => b.classList.toggle('active', b.dataset.pay === 'mpesa'));
   document.getElementById('payDebtModal').style.display = 'flex';
   document.getElementById('payDebtAmount').focus();
 }
 window.openPayDebt = openPayDebt;
-let payDebtMethod = 'cash';
+let payDebtMethod = 'mpesa';
 function closePayDebt() { document.getElementById('payDebtModal').style.display = 'none'; payingPhone = ''; }
 document.getElementById('payDebtCancelBtn')?.addEventListener('click', closePayDebt);
 document.getElementById('payDebtModal')?.addEventListener('click', e => { if (e.target.id === 'payDebtModal') closePayDebt(); });
@@ -2280,9 +2281,8 @@ function buildBroadcastMessage(recipientName) {
   const itemsBlock = items.length
     ? '\n\n' + items.map((b, i) => `${i + 1}. *${b.name}*${b.price > 0 ? ' · ' + fmtKsh(b.price) : ''}`).join('\n')
     : '';
-  const lookUrl = 'https://chiclabelle.essenceautomations.com';
   const greet = recipientName ? `Hi ${recipientName.split(' ')[0]}! ` : 'Hi! ';
-  return `${greet}It's Chic La Belle. ${subject || 'Fresh stock just landed'}.${itemsBlock}\n\nTap to browse: ${lookUrl}\n\nReply here to enquire. 🤍`;
+  return `${greet}It's Chic La Belle. ${subject || 'Fresh stock just landed'}.${itemsBlock}\n\nTap to browse: ${SHOP_URL}\n\nReply here to enquire. 🤍`;
 }
 
 function renderBroadcastPreview() {
@@ -2319,7 +2319,7 @@ function renderBroadcastStepper() {
     return;
   }
   const r = bcQueue[bcIdx];
-  const href = `https://wa.me/${r.phone}?text=${encodeURIComponent(buildBroadcastMessage(r.name))}`;
+  const href = `https://wa.me/${clientWaPhone(r.phone)}?text=${encodeURIComponent(buildBroadcastMessage(r.name))}`;
   el.style.display = 'block';
   el.innerHTML = `
     <div class="bc-step-head">Sending ${bcIdx + 1} of ${bcQueue.length}</div>
@@ -2369,7 +2369,7 @@ document.getElementById('broadcastStartBtn')?.addEventListener('click', async ()
     }
     const r = recipients[i++];
     const msg = buildBroadcastMessage(r.name);
-    window.open(`https://wa.me/${r.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/${clientWaPhone(r.phone)}?text=${encodeURIComponent(msg)}`, '_blank');
     document.getElementById('broadcastStatus').textContent = `Opening ${i} of ${recipients.length}…`;
     setTimeout(next, 700);
   }
