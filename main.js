@@ -774,7 +774,7 @@ const API_BASE = 'https://chiclabelle-api.stawisystems.workers.dev';
       + '<div class="ns-rule"></div>'
       + '<h1 class="ns-head">This shop is paused</h1>'
       + '<p class="ns-body">Not ready for a monthly plan? You don\'t need one.</p>'
-      + '<p class="ns-offer">Now you can <b>own this shop outright for a one-time Ksh 20,000</b>, no monthly fees. Or keep it running from Ksh 3,000 a month.</p>'
+      + '<p class="ns-offer">Now you can <b>own this shop outright for a one-time Ksh 20,000</b>, no monthly fees. New stock you post on Instagram pulls straight into your shop.</p>'
       + '<a class="ns-wa" href="' + waLink + '" target="_blank" rel="noopener">' + WA_SVG + ' Bring my shop back</a>'
     );
     document.body.appendChild(o);
